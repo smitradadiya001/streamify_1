@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import { LANGUAGE_TO_FLAG } from "../constants";
 
-const FriendCard = ({ friend }) => {
+const FriendCard = ({ friend, onSendRequest }) => {
+  const [requestSent, setRequestSent] = useState(false);
+
+  const handleSendRequest = () => {
+    if (onSendRequest) {
+      onSendRequest(friend._id); // Call parent function to send request
+    }
+    setRequestSent(true); // Only this button is disabled
+  };
+
   return (
     <div className="card bg-base-200 hover:shadow-md transition-shadow">
       <div className="card-body p-4">
@@ -24,13 +34,24 @@ const FriendCard = ({ friend }) => {
           </span>
         </div>
 
-        <Link to={`/chat/${friend._id}`} className="btn btn-outline w-full">
+        {/* Friend Request Button */}
+        <button
+          onClick={handleSendRequest}
+          disabled={requestSent}
+          className={`btn w-full ${requestSent ? "btn-disabled" : "btn-primary"}`}
+        >
+          {requestSent ? "Request Sent" : "Send Friend Request"}
+        </button>
+
+        {/* Optional: Message button below */}
+        <Link to={`/chat/${friend._id}`} className="btn btn-outline w-full mt-2">
           Message
         </Link>
       </div>
     </div>
   );
 };
+
 export default FriendCard;
 
 export function getLanguageFlag(language) {
